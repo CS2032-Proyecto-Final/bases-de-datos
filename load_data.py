@@ -2,7 +2,8 @@ import boto3
 import json
 
 # Inicializar DynamoDB
-dynamodb = boto3.resource('dynamodb')
+
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
 # Prefijo para las tablas
 pref = "test"
