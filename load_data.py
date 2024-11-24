@@ -10,7 +10,7 @@ pref = "test"
 
 def load_data_to_dynamodb(table_name, data_file):
     # Añadir prefijo al nombre de la tabla
-    full_table_name = f"{pref}_{table_name}"
+    full_table_name = f"{pref}-{table_name}"
     table = dynamodb.Table(full_table_name)
     
     # Leer los datos desde el archivo
@@ -18,9 +18,8 @@ def load_data_to_dynamodb(table_name, data_file):
         items = json.load(file)
         
         # Usar batch_writer para cargar los datos
-        with table.batch_writer() as batch:
-            for item in items:
-                batch.put_item(Item=item)
+        for item in items:
+            table.put_item(Item=item)
     print(f"Datos cargados en la tabla {full_table_name}")
 
 # Cargar los datos en las tablas correspondientes
