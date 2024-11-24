@@ -3,7 +3,7 @@ import csv
 import os
 
 # Variable global para definir el nombre de la tabla
-TABLE_NAME = "t_books"
+TABLE_NAME = "t_environments"
 
 def export_table_to_csv_dynamodb(prefix, table_name=TABLE_NAME):
     """
@@ -44,6 +44,6 @@ def export_table_to_csv_dynamodb(prefix, table_name=TABLE_NAME):
     print(f"Exported table {table_name} to {csv_file_path}")
 
 # Llamadas a la función con diferentes prefijos
-export_table_to_csv_dynamodb("dev")
+#export_table_to_csv_dynamodb("dev")
 export_table_to_csv_dynamodb("test")
 #export_table_to_csv_dynamodb("prod")
