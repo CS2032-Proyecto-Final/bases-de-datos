@@ -4,7 +4,7 @@ from botocore.exceptions import NoCredentialsError
 
 # Variables globales
 BASE_DIRECTORY = "."  # Directorio base donde se encuentran los archivos locales
-BOOKS_SUBFOLDER = "books"  # Carpeta en el bucket para almacenar los .csv de libros
+BOOKS_SUBFOLDER = "environments"  # Carpeta en el bucket para almacenar los .csv de libros
 
 # Conexión a S3 usando las credenciales configuradas en ~/.aws/credentials
 s3 = boto3.client('s3')
