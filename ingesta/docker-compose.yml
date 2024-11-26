@@ -4,8 +4,8 @@ services:
     volumes:
       - ~/.aws:/root/.aws:ro
   
-  ingesta-t_books:
-    build: ./t_books
+  ingesta-t_favorites:
+    build: ./t_favorites
     volumes:
       - ~/.aws:/root/.aws:ro
   
