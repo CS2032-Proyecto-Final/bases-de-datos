@@ -3,3 +3,19 @@ services:
     build: ./t_users
     volumes:
       - ~/.aws:/root/.aws:ro
+  
+  ingesta-t_books:
+    build: ./t_books
+    volumes:
+      - ~/.aws:/root/.aws:ro
+  
+  ingesta-t_environments:
+    build: ./t_environments
+    volumes:
+      - ~/.aws:/root/.aws:ro
+  
+  ingesta-t_books:
+    build: ./t_books
+    volumes:
+      - ~/.aws:/root/.aws:ro
+  
