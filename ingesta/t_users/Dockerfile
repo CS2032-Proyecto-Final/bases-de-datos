@@ -12,6 +12,6 @@ RUN mkdir -p ~/.aws
 WORKDIR /usr/src/app
 COPY . .
 
-CMD ["python3", "./pull_user.py"]
+CMD ["python3", "./pull_users.py"]
 
 CMD ["python3", "./load_users.py"]
