@@ -1,0 +1,5 @@
+services:
+  ingesta-t_users:
+    build: ./t_users
+    volumes:
+      - ~/.aws:/root/.aws:ro
