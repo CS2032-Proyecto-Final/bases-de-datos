@@ -12,6 +12,10 @@ RUN mkdir -p ~/.aws
 WORKDIR /usr/src/app
 COPY . .
 
+# Declarar variable de entorno disponible para los scripts
+ARG STAGE
+ENV STAGE=$STAGE
+
 CMD ["python3", "./pull_users.py"]
 
 CMD ["python3", "./load_users.py"]

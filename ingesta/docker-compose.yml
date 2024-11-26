@@ -1,21 +1,28 @@
 services:
   ingesta-t_users:
     build: ./t_users
+    environment:
+      - STAGE=${STAGE}
     volumes:
       - ~/.aws:/root/.aws:ro
   
   ingesta-t_favorites:
     build: ./t_favorites
+    environment:
+      - STAGE=${STAGE}
     volumes:
       - ~/.aws:/root/.aws:ro
   
   ingesta-t_environments:
     build: ./t_environments
+    environment:
+      - STAGE=${STAGE}
     volumes:
       - ~/.aws:/root/.aws:ro
   
   ingesta-t_books:
     build: ./t_books
+    environment:
+      - STAGE=${STAGE}
     volumes:
       - ~/.aws:/root/.aws:ro
-  
