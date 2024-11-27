@@ -1,12 +1,19 @@
 FROM python:3.9-slim
 
-RUN pip3 install --no-cache-dir os boto3
+# Install necessary libraries
+RUN pip3 install --no-cache-dir boto3
 
+# Create the AWS configuration directory
 RUN mkdir -p ~/.aws
 
+# Set the working directory
 WORKDIR /usr/src/app
+
+# Copy the source code into the container
 COPY . .
 
-# Declarar variable de entorno disponible para los scripts
+# Define the environment variable for the stage
+ENV STAGE=${STAGE}
 
-CMD ["sh", "-c", "python3 ./pull_users.py && python3 ./load_users.py && tail -f /dev/null"]
+# Use the listener script as the entry point
+CMD ["python3", "./listener.py"]
