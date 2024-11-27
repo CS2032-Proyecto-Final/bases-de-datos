@@ -45,5 +45,4 @@ def export_table_to_csv_dynamodb(prefix, table_name=TABLE_NAME):
 
 # Llamadas a la función con diferentes prefijos
 prefix = os.environ.get("STAGE")
-print(prefix)
 export_table_to_csv_dynamodb(prefix)

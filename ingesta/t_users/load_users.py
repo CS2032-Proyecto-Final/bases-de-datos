@@ -21,9 +21,6 @@ def upload_to_s3(file_path, bucket, s3_file_path):
 
 # Función para realizar la ingesta de archivos de libros
 def ingest():
-    """
-    Recorre los directorios que tienen prefijos como `dev`, `test`, `prod`,
-    """
     stage = os.environ.get("STAGE", "dev")  # Prefijo basado en el entorno
     for root, dirs, files in os.walk(BASE_DIRECTORY):
         for file in files:

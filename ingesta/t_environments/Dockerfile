@@ -1,17 +1,21 @@
 FROM python:3.9-slim
 
-RUN apt-get update && apt-get install -y \
-    gcc \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Install necessary libraries
+RUN pip3 install --no-cache-dir boto3
 
-RUN pip3 install --no-cache-dir psycopg2 boto3
-
+# Create the AWS configuration directory
 RUN mkdir -p ~/.aws
 
+# Set the working directory
 WORKDIR /usr/src/app
+
+# Copy the source code into the container
 COPY . .
 
+# Define the environment variable for the stage
+ENV STAGE=${STAGE}
+
+# Use the listener script as the entry point
 CMD ["python3", "./pull_environments.py"]
 
 CMD ["python3", "./load_environments.py"]
