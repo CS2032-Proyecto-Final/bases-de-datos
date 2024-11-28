@@ -13,17 +13,7 @@ tenants = {
         {"S": "computadoras", "count": 20},
         {"S": "salas_de_estudio", "count": 30},
         {"S": "salas_de_talleres", "count": 40},
-    ],
-    "upn": [{"S": "computadoras", "count": 50}],
-    "utec": [
-        {"S": "computadoras", "count": 40},
-        {"S": "salas_de_estudio", "count": 20},
-    ],
-    "unmsm": [
-        {"S": "computadoras", "count": 60},
-        {"S": "salas_de_estudio", "count": 20},
-        {"S": "salas_de_talleres", "count": 40},
-    ],
+    ]
 }
 
 # Prefijos por tipo y tenant

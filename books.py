@@ -4,7 +4,7 @@ import random
 import re
 
 # Lista de tenants, se puede añadir mas
-tenants = ["utec", "upn", "bnp", "unmsm", "uni", "upch"]
+tenants = ["utec", "uni", "bnp"]
 
 # Salida
 output_file = "books.json"
