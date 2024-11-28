@@ -46,7 +46,7 @@ for _ in range(10000):
         "tenant_id": tenant_id,
         "email": email,
         "password": password,
-        "date_creation": random_date(),
+        "creation_date": random_date(),
         "firstname": firstname,
         "lastname": lastname,
     }

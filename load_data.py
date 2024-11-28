@@ -1,6 +1,6 @@
 import boto3
 import json
-
+import os
 # Inicializar DynamoDB
 
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')

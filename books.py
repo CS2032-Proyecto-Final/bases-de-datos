@@ -32,6 +32,13 @@ def clean_pages(pages):
             return int(match.group())
     return random.randint(100, 450)
 
+# Generar un código único de ubicación
+def generate_location_code():
+    letter = random.choice("ABCDEFGHIJKLMNOPQRSTUVWXYZ")  # Letra aleatoria
+    number = random.randint(0, 999)  # Número de hasta 3 dígitos
+    return f"{letter}{number}" if number else letter
+
+
 # Funcion para crear un libro valido, si no hay ciertos campos se omite toda la fila
 # Campos obligatorios: isbn, title, author, coverImg(url del cover)
 def create_book(entry):
@@ -54,7 +61,8 @@ def create_book(entry):
         "quantity": random.randint(3, 20),
         "stock": random.randint(1, 15),
         "cover_url": entry["coverImg"],
-        "description": entry["description"] if entry["description"] else "Descripción no disponible."
+        "description": entry["description"] if entry["description"] else "Descripción no disponible.",
+        "ubicacion": generate_location_code()  # Añadir el código de ubicación
     }
     return book
 
