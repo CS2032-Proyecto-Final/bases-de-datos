@@ -24,6 +24,6 @@ def load_data_to_dynamodb(table_name, data_file):
 
 # Cargar los datos en las tablas correspondientes
 #load_data_to_dynamodb('t_users', 'users.json')
-#load_data_to_dynamodb('t_books', 'books.json')
+load_data_to_dynamodb('t_books', 'books.json')
 #load_data_to_dynamodb('t_favorites', 'favorites.json')
 load_data_to_dynamodb('t_environments', 'environments.json')
