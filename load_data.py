@@ -1,12 +1,12 @@
 import boto3
 import json
-
+import os
 # Inicializar DynamoDB
 
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
 # Prefijo para las tablas
-pref = "test"
+pref = os.environ.get("STAGE")
 
 def load_data_to_dynamodb(table_name, data_file):
     # Añadir prefijo al nombre de la tabla
