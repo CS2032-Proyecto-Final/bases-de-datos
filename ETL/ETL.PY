@@ -1,71 +1,145 @@
+from airflow import DAG
+from airflow.decorators import task
+from airflow.hooks.base import BaseHook
+from datetime import datetime
 import boto3
 import pandas as pd
-from sqlalchemy import create_engine
-import os
-import time
+import pymysql
+from io import StringIO
 
-ATHENA_S3_OUTPUT = 's3://resultados-dev-athena/Unsaved/2024/11/29/'  
-REGION_NAME = 'us-west-1'
+# Variables globales
+ATHENA_QUERY = "SELECT * FROM your_table LIMIT 100"
+ATHENA_DATABASE = "your_database"
+S3_OUTPUT_LOCATION = "s3://your-bucket/athena-output/"
+MYSQL_TABLE_NAME = "your_table"
 
-MYSQL_HOST = '52.20.58.206'
-MYSQL_PORT = '8005'  
-MYSQL_USER = 'root'  
-MYSQL_PASSWORD = 'utec'
-MYSQL_DB = 'prod'
+# Función para obtener credenciales de MySQL desde Airflow
+def get_mysql_credentials():
+    conn = BaseHook.get_connection("mysql_credentials")
+    mysql_credentials = {
+        "host": conn.host,
+        "login": conn.login,
+        "password": conn.password,
+        "port": conn.port
+    }
+    return mysql_credentials
 
-def download_csv_from_s3(s3_bucket_path, local_path):
-    try:
-        s3 = boto3.client('s3')
-        bucket_name = s3_bucket_path.split('/')[2]  
-        prefix = '/'.join(s3_bucket_path.split('/')[3:])  
+# Función para obtener credenciales de AWS desde Airflow
+def get_aws_credentials():
+    conn = BaseHook.get_connection("aws_credentials")
+    aws_credentials = {
+        "access_key": conn.login,
+        "secret_access_key": conn.password,
+        "session_token": conn.extra_dejson.get("aws_session_token"),
+    }
+    return aws_credentials
 
-        response = s3.list_objects_v2(Bucket=bucket_name, Prefix=prefix)
-        files = [content['Key'] for content in response.get('Contents', [])]
+# DAG definition
+dag = DAG(
+    'etl_athena_mysql',
+    description='Reusable ETL DAG for Athena to MySQL',
+    schedule_interval='@once',
+    start_date=datetime(2024, 1, 1),
+    catchup=False,
+)
 
-        if not files:
-            print(f"No se encontraron archivos en la ruta S3: {s3_bucket_path}")
-            return []
+# Tarea para extraer datos desde Athena
+@task(dag=dag)
+def extract_data_from_athena():
+    aws_credentials = get_aws_credentials()
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id=aws_credentials["access_key"],
+        aws_secret_access_key=aws_credentials["secret_access_key"],
+        aws_session_token=aws_credentials["session_token"],
+    )
+    athena_client = boto3.client(
+        'athena',
+        aws_access_key_id=aws_credentials["access_key"],
+        aws_secret_access_key=aws_credentials["secret_access_key"],
+        aws_session_token=aws_credentials["session_token"],
+    )
 
-        for file_key in files:
-            local_file_path = os.path.join(local_path, file_key.split('/')[-1])
-            s3.download_file(bucket_name, file_key, local_file_path)
-            print(f"Archivo descargado: {local_file_path}")
-        return files
-    except Exception as e:
-        print(f"Error al descargar los archivos desde S3: {e}")
-        return []
+    # Ejecutar consulta en Athena
+    response = athena_client.start_query_execution(
+        QueryString=ATHENA_QUERY,
+        QueryExecutionContext={'Database': ATHENA_DATABASE},
+        ResultConfiguration={'OutputLocation': S3_OUTPUT_LOCATION}
+    )
+    query_execution_id = response['QueryExecutionId']
 
-def insert_into_mysql(df, table_name):
-    try:
-        engine = create_engine(f'mysql+mysqlconnector://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}')
-        df.to_sql(table_name, con=engine, if_exists='replace', index=False)
-        print(f"Datos insertados correctamente en la tabla {table_name} en MySQL.")
-    except Exception as e:
-        print(f"Error al insertar datos en MySQL: {e}")
+    # Esperar a que termine la consulta
+    status = 'RUNNING'
+    while status in ['RUNNING', 'QUEUED']:
+        result = athena_client.get_query_execution(QueryExecutionId=query_execution_id)
+        status = result['QueryExecution']['Status']['State']
 
-def main():
-    local_download_path = '/tmp/csv_files'  
-    os.makedirs(local_download_path, exist_ok=True) 
+    if status != 'SUCCEEDED':
+        raise Exception(f"Consulta fallida con estado: {status}")
 
-    files = download_csv_from_s3(ATHENA_S3_OUTPUT, local_download_path)
+    # Descargar resultados del bucket S3
+    result_file = f"{S3_OUTPUT_LOCATION}{query_execution_id}.csv"
+    bucket_name, key = result_file.replace("s3://", "").split("/", 1)
+    response = s3_client.get_object(Bucket=bucket_name, Key=key)
 
-    if not files:
-        print("No se encontraron archivos CSV en el bucket.")
-        return
+    # Guardar resultados localmente
+    data = response['Body'].read().decode('utf-8')
+    with open('/tmp/extracted_data.csv', 'w') as f:
+        f.write(data)
+    print("Datos extraídos y guardados en /tmp/extracted_data.csv")
 
-    for file in files:
-        local_file_path = os.path.join(local_download_path, file.split('/')[-1])
+# Tarea para transformar datos
+@task(dag=dag)
+def transform_data():
+    # Leer el archivo CSV
+    df = pd.read_csv('/tmp/extracted_data.csv')
+    # Transformación: convertir nombres de columnas a minúsculas
+    df.columns = [col.lower() for col in df.columns]
+    # Guardar CSV transformado
+    df.to_csv('/tmp/transformed_data.csv', index=False)
+    print("Datos transformados y guardados en /tmp/transformed_data.csv")
 
-        try:
-            df = pd.read_csv(local_file_path)
+# Tarea para cargar datos a MySQL
+@task(dag=dag)
+def load_data_to_mysql():
+    mysql_credentials = get_mysql_credentials()
+    connection = pymysql.connect(
+        host=mysql_credentials["host"],
+        user=mysql_credentials["login"],
+        password=mysql_credentials["password"],
+        port=mysql_credentials["port"],
+        database='your_database',##REVISAR
+        cursorclass=pymysql.cursors.DictCursor
+    )
+    cursor = connection.cursor()
 
-            print(f"Archivo CSV {local_file_path} cargado exitosamente.")
+    # Leer archivo transformado
+    df = pd.read_csv('/tmp/transformed_data.csv')
 
-            table_name = f'table_from_{file.split("/")[-1].split(".")[0]}' 
+    # Crear tabla si no existe
+    create_table_query = f"""
+    CREATE TABLE IF NOT EXISTS {MYSQL_TABLE_NAME} (
+        {', '.join([f'{col} TEXT' for col in df.columns])}
+    );
+    """
+    cursor.execute(create_table_query)
 
-            insert_into_mysql(df, table_name)
-        except Exception as e:
-            print(f"Error al procesar el archivo {local_file_path}: {e}")
+    # Insertar datos
+    for _, row in df.iterrows():
+        insert_query = f"""
+        INSERT INTO {MYSQL_TABLE_NAME} ({', '.join(df.columns)})
+        VALUES ({', '.join(['%s'] * len(row))})
+        """
+        cursor.execute(insert_query, tuple(row))
 
-if __name__ == "__main__":
-    main()
+    connection.commit()
+    cursor.close()
+    connection.close()
+    print("Datos cargados exitosamente a MySQL")
+
+# Dependencias entre tareas
+extract_task = extract_data_from_athena()
+transform_task = transform_data()
+load_task = load_data_to_mysql()
+
+extract_task >> transform_task >> load_task
