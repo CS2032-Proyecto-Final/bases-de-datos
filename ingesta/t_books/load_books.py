@@ -24,6 +24,8 @@ def upload_to_s3(file_path, bucket, s3_file_path):
         logger.error(f"El archivo '{file_path}' no fue encontrado.")
     except NoCredentialsError:
         logger.critical("Credenciales de AWS no disponibles.")
+    except Exception as e:
+        logger.error(f"Error desconocido al subir el archivo '{file_path}': {str(e)}")
 
 # Función para realizar la ingesta de archivos de libros
 def ingest():
