@@ -21,8 +21,9 @@ LOCAL_OUTPUT_FILE = "./athena_query_1.csv"  # Path to save the result locally
 
 def execute_athena_query():
     # Initialize the Athena client
-    athena_client = boto3.client('athena')
-    s3_client = boto3.client('s3')
+# Initialize the Athena and S3 clients with us-east-1 region
+    athena_client = boto3.client('athena', region_name='us-east-1')
+    s3_client = boto3.client('s3', region_name='us-east-1')
 
     # Start Athena query execution
     response = athena_client.start_query_execution(
