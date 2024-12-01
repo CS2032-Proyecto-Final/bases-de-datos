@@ -6,6 +6,7 @@ services:
       - STAGE=${STAGE}
     volumes:
       - ~/.aws:/root/.aws:ro
+      - ./logs:/logs
   
   ingesta-t_favorites:
     container_name: t_favorites
@@ -14,6 +15,7 @@ services:
       - STAGE=${STAGE}
     volumes:
       - ~/.aws:/root/.aws:ro
+      - ./logs:/logs
   
   ingesta-t_environments:
     container_name: t_environments
@@ -22,6 +24,7 @@ services:
       - STAGE=${STAGE}
     volumes:
       - ~/.aws:/root/.aws:ro
+      - ./logs:/logs
   
   ingesta-t_books:
     container_name: t_books
@@ -30,3 +33,4 @@ services:
       - STAGE=${STAGE}
     volumes:
       - ~/.aws:/root/.aws:ro
+      - ./logs:/logs
