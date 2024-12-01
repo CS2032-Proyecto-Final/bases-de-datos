@@ -3,10 +3,10 @@
 # Listado de scripts a ejecutar
 scripts=(
   "books.py"
+  "users.py"
   "environments.py"
   "favorites.py"
   "notifications.py"
-  "users.py"
 )
 
 # Ejecutar cada script
