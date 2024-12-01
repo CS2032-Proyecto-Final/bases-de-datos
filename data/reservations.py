@@ -73,6 +73,13 @@ for environment in environments:
             "status": "pending",
             "tenant_id#type": f"{tenant}#env",
             "email#status": f"{email}#pending",
+            "max_return_date#status": "",
+            "isbn": "",
+            "author_name": "",
+            "author_lastname": "",
+            "title": "",
+            "pickup_date": "",
+            "max_return_date": "",
             "env_name": name,
             "date": date,
             "hour": hour,
@@ -115,7 +122,11 @@ for _ in range(50000):
         "author_lastname": author_lastname,
         "title": title,
         "pickup_date": pickup_date,
-        "max_return_date": max_return_date
+        "max_return_date": max_return_date,
+        "env_name": "",
+        "date": "",
+        "hour": "",
+        "capacity": ""
     }
 
     reservations.append(reservation)
