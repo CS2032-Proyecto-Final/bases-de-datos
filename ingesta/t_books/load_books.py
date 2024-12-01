@@ -27,7 +27,7 @@ def upload_to_s3(file_path, bucket, s3_file_path):
 
 # Función para realizar la ingesta de archivos de libros
 def ingest():
-    stage = os.environ.get("STAGE", "dev")  # Prefijo basado en el entorno
+    stage = os.environ.get("STAGE")  # Prefijo basado en el entorno
     logger.info(f"Iniciando ingesta para el stage '{stage}' en el contenedor 't_books'")
     start_time = datetime.now()
     processed_files = 0

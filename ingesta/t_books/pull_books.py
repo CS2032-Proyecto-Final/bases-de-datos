@@ -64,5 +64,5 @@ def export_table_to_csv_dynamodb(prefix, table_name=TABLE_NAME):
         logger.info(f"Exportación finalizada. Tiempo total: {end_time - start_time}")
 
 # Llamadas a la función con diferentes prefijos
-prefix = os.environ.get("STAGE", "dev")  # Default "dev" if not set
+prefix = os.environ.get("STAGE")  # Default "dev" if not set
 export_table_to_csv_dynamodb(prefix)
