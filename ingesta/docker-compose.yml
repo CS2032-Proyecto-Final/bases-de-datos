@@ -43,3 +43,12 @@ services:
     volumes:
       - ~/.aws:/root/.aws:ro
       - ./logs:/logs
+
+  ingesta-t_reservations:
+    container_name: t_reservations
+    build: ./t_reservations
+    environment:
+      - STAGE=${STAGE}
+    volumes:
+      - ~/.aws:/root/.aws:ro
+      - ./logs:/logs
