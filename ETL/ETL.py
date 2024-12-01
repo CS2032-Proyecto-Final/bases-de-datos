@@ -8,9 +8,20 @@ import pymysql
 from io import StringIO
 
 # Variables globales
-ATHENA_QUERY = "SELECT * FROM your_table LIMIT 100"
-ATHENA_DATABASE = "your_database"
-S3_OUTPUT_LOCATION = "s3://your-bucket/athena-output/"
+ATHENA_QUERY = """SELECT 
+        u.tenant_id,
+        CONCAT(u.firstname, ' ', u.lastname) AS full_name,
+        u.email,
+        u.creation_date
+    FROM 
+        tusers u
+    WHERE 
+        u.creation_date = (SELECT MIN(creation_date) FROM tusers WHERE tenant_id = u.tenant_id)
+    ORDER BY 
+        u.tenant_id, u.creation_date ASC;
+"""  # Replace with your query
+ATHENA_DATABASE = "test-bibliokuna"  # Replace with your Athena database name
+S3_OUTPUT_LOCATION = "s3://your-bucket/athena-output/"  # Replace with your S3 output path
 MYSQL_TABLE_NAME = "your_table"
 
 # Función para obtener credenciales de MySQL desde Airflow

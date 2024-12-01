@@ -3,7 +3,7 @@ import time
 import os
 
 # Configuration Variables
-ATHENA_QUERY = f"SELECT 
+ATHENA_QUERY = """SELECT 
         u.tenant_id,
         CONCAT(u.firstname, ' ', u.lastname) AS full_name,
         u.email,
@@ -14,7 +14,7 @@ ATHENA_QUERY = f"SELECT
         u.creation_date = (SELECT MIN(creation_date) FROM tusers WHERE tenant_id = u.tenant_id)
     ORDER BY 
         u.tenant_id, u.creation_date ASC;
-"  # Replace with your query
+"""  # Replace with your query
 ATHENA_DATABASE = "test-bibliokuna"  # Replace with your Athena database name
 S3_OUTPUT_LOCATION = "s3://your-bucket/athena-output/"  # Replace with your S3 output path
 LOCAL_OUTPUT_FILE = "./athena_query_1.csv"  # Path to save the result locally
