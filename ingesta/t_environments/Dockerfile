@@ -12,9 +12,6 @@ WORKDIR /usr/src/app
 # Copy the source code into the container
 COPY . .
 
-# Define the environment variable for the stage
-ENV STAGE=${STAGE}
-
 # Use the listener script as the entry point
 CMD ["python3", "./pull_environments.py"]
 
