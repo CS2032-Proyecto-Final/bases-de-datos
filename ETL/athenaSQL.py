@@ -3,10 +3,21 @@ import time
 import os
 
 # Configuration Variables
-ATHENA_QUERY = "SELECT * FROM your_table LIMIT 100"  # Replace with your query
-ATHENA_DATABASE = "your_database"  # Replace with your Athena database name
+ATHENA_QUERY = f"SELECT 
+        u.tenant_id,
+        CONCAT(u.firstname, ' ', u.lastname) AS full_name,
+        u.email,
+        u.creation_date
+    FROM 
+        tusers u
+    WHERE 
+        u.creation_date = (SELECT MIN(creation_date) FROM tusers WHERE tenant_id = u.tenant_id)
+    ORDER BY 
+        u.tenant_id, u.creation_date ASC;
+"  # Replace with your query
+ATHENA_DATABASE = "test-bibliokuna"  # Replace with your Athena database name
 S3_OUTPUT_LOCATION = "s3://your-bucket/athena-output/"  # Replace with your S3 output path
-LOCAL_OUTPUT_FILE = "/tmp/athena_query_result.csv"  # Path to save the result locally
+LOCAL_OUTPUT_FILE = "./athena_query_1.csv"  # Path to save the result locally
 
 def execute_athena_query():
     # Initialize the Athena client
