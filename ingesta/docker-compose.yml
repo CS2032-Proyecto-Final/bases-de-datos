@@ -7,7 +7,7 @@ services:
     volumes:
       - ~/.aws:/root/.aws:ro
       - ./logs:/logs
-  
+
   ingesta-t_favorites:
     container_name: t_favorites
     build: ./t_favorites
@@ -16,7 +16,7 @@ services:
     volumes:
       - ~/.aws:/root/.aws:ro
       - ./logs:/logs
-  
+
   ingesta-t_environments:
     container_name: t_environments
     build: ./t_environments
@@ -25,10 +25,19 @@ services:
     volumes:
       - ~/.aws:/root/.aws:ro
       - ./logs:/logs
-  
+
   ingesta-t_books:
     container_name: t_books
     build: ./t_books
+    environment:
+      - STAGE=${STAGE}
+    volumes:
+      - ~/.aws:/root/.aws:ro
+      - ./logs:/logs
+
+  ingesta-t_notifications:
+    container_name: t_notifications
+    build: ./t_notifications
     environment:
       - STAGE=${STAGE}
     volumes:

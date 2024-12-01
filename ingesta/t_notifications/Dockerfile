@@ -12,10 +12,5 @@ WORKDIR /usr/src/app
 # Copy the source code into the container
 COPY . .
 
-# Define the environment variable for the stage
-ENV STAGE=${STAGE}
-
 # Use the listener script as the entry point
-CMD ["python3", "./pull_notifications.py"]
-
-CMD ["python3", "./load_notifications.py"]
+CMD ["bash", "-c", "python3 ./pull_notifications.py && python3 ./load_notifications.py"]

@@ -13,6 +13,4 @@ WORKDIR /usr/src/app
 COPY . .
 
 # Use the listener script as the entry point
-CMD ["python3", "./pull_favorites.py"]
-
-CMD ["python3", "./load_favorites.py"]
+CMD ["bash", "-c", "python3 ./pull_favorites.py && python3 ./load_favorites.py"]

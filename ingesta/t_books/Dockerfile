@@ -13,6 +13,5 @@ WORKDIR /usr/src/app
 COPY . .
 
 # Use the listener script as the entry point
-CMD ["python3", "./pull_books.py"]
+CMD ["bash", "-c", "python3 ./pull_books.py && python3 ./load_books.py"]
 
-CMD ["python3", "./load_books.py"]
