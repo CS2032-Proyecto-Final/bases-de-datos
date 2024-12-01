@@ -21,7 +21,7 @@ ATHENA_QUERY = """SELECT
         u.tenant_id, u.creation_date ASC;
 """  # Replace with your query
 ATHENA_DATABASE = "test-bibliokuna"  # Replace with your Athena database name
-S3_OUTPUT_LOCATION = "s3://your-bucket/athena-output/"  # Replace with your S3 output path
+S3_OUTPUT_LOCATION = "s3://athena-bibliokuna/"  # Replace with your S3 output path
 MYSQL_TABLE_NAME = "your_table"
 
 # Función para obtener credenciales de MySQL desde Airflow
