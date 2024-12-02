@@ -16,7 +16,8 @@ ATHENA_QUERY = """SELECT
         u.tenant_id, u.creation_date ASC;
 """  # Replace with your query
 ATHENA_DATABASE = "test-bibliokuna"  # Replace with your Athena database name
-S3_OUTPUT_LOCATION = "s3://athena-bibliokuna/"  # Replace with your S3 output path
+QUERY_NAME="query_1"
+S3_OUTPUT_LOCATION = f"s3://athena-bibliokuna/{QUERY_NAME}"  # Replace with your S3 output path
 LOCAL_OUTPUT_FILE = "./athena_query_1.csv"  # Path to save the result locally
 
 def execute_athena_query():

@@ -8,7 +8,8 @@ import pymysql
 from io import StringIO
 
 # Variables globales
-ATHENA_QUERY = """SELECT 
+ATHENA_QUERY = """
+    SELECT 
         u.tenant_id,
         CONCAT(u.firstname, ' ', u.lastname) AS full_name,
         u.email,
@@ -21,8 +22,9 @@ ATHENA_QUERY = """SELECT
         u.tenant_id, u.creation_date ASC;
 """  # Replace with your query
 ATHENA_DATABASE = "test-bibliokuna"  # Replace with your Athena database name
-S3_OUTPUT_LOCATION = "s3://athena-bibliokuna/"  # Replace with your S3 output path
-MYSQL_TABLE_NAME = "your_table"
+QUERY_NAME="query_1"
+S3_OUTPUT_LOCATION = f"s3://athena-bibliokuna/{QUERY_NAME}/"  # Replace with your S3 output path
+MYSQL_TABLE_NAME = QUERY_NAME
 
 # Función para obtener credenciales de MySQL desde Airflow
 def get_mysql_credentials():
@@ -47,7 +49,7 @@ def get_aws_credentials():
 
 # DAG definition
 dag = DAG(
-    'etl_athena_mysql',
+    'etl_athena_mysql_query_1',
     description='Reusable ETL DAG for Athena to MySQL',
     schedule_interval='@once',
     start_date=datetime(2024, 1, 1),
@@ -63,14 +65,16 @@ def extract_data_from_athena():
         aws_access_key_id=aws_credentials["access_key"],
         aws_secret_access_key=aws_credentials["secret_access_key"],
         aws_session_token=aws_credentials["session_token"],
+        region_name='us-east-1'
     )
     athena_client = boto3.client(
         'athena',
         aws_access_key_id=aws_credentials["access_key"],
         aws_secret_access_key=aws_credentials["secret_access_key"],
         aws_session_token=aws_credentials["session_token"],
+        region_name='us-east-1'
     )
-
+    
     # Ejecutar consulta en Athena
     response = athena_client.start_query_execution(
         QueryString=ATHENA_QUERY,
@@ -95,7 +99,7 @@ def extract_data_from_athena():
 
     # Guardar resultados localmente
     data = response['Body'].read().decode('utf-8')
-    with open('/tmp/extracted_data.csv', 'w') as f:
+    with open(f"/tmp/extracted_data_{QUERY_NAME}.csv", 'w') as f:
         f.write(data)
     print("Datos extraídos y guardados en /tmp/extracted_data.csv")
 
@@ -103,11 +107,11 @@ def extract_data_from_athena():
 @task(dag=dag)
 def transform_data():
     # Leer el archivo CSV
-    df = pd.read_csv('/tmp/extracted_data.csv')
+    df = pd.read_csv(f"/tmp/extracted_data_{QUERY_NAME}.csv")
     # Transformación: convertir nombres de columnas a minúsculas
     df.columns = [col.lower() for col in df.columns]
     # Guardar CSV transformado
-    df.to_csv('/tmp/transformed_data.csv', index=False)
+    df.to_csv(f"/tmp/transformed_data_{QUERY_NAME}.csv", index=False)
     print("Datos transformados y guardados en /tmp/transformed_data.csv")
 
 # Tarea para cargar datos a MySQL
@@ -119,13 +123,13 @@ def load_data_to_mysql():
         user=mysql_credentials["login"],
         password=mysql_credentials["password"],
         port=mysql_credentials["port"],
-        database='your_database',##REVISAR
+        database="queries-bibliokuna",
         cursorclass=pymysql.cursors.DictCursor
     )
     cursor = connection.cursor()
 
     # Leer archivo transformado
-    df = pd.read_csv('/tmp/transformed_data.csv')
+    df = pd.read_csv(f"/tmp/transformed_data_{QUERY_NAME}.csv")
 
     # Crear tabla si no existe
     create_table_query = f"""
