@@ -9,20 +9,20 @@ from io import StringIO
 
 # Variables globales
 ATHENA_QUERY = """
-    SELECT 
-        u.tenant_id,
-        CONCAT(u.firstname, ' ', u.lastname) AS full_name,
-        u.email,
-        u.creation_date
-    FROM 
-        tusers u
-    WHERE 
-        u.creation_date = (SELECT MIN(creation_date) FROM tusers WHERE tenant_id = u.tenant_id)
-    ORDER BY 
-        u.tenant_id, u.creation_date ASC;
+SELECT 
+    SPLIT_PART(r."tenant_id#type", '#', 1) AS tenant_id,
+    COUNT(*) AS active_reservations
+FROM 
+    treservations r
+WHERE 
+    r.status = 'pending'
+GROUP BY 
+    SPLIT_PART(r."tenant_id#type", '#', 1)
+ORDER BY 
+    active_reservations DESC;
 """  # Replace with your query
 ATHENA_DATABASE = "test-bibliokuna"  # Replace with your Athena database name
-QUERY_NAME="query_1"
+QUERY_NAME="query_4"
 S3_OUTPUT_LOCATION = f"s3://athena-bibliokuna/{QUERY_NAME}/"  # Replace with your S3 output path
 MYSQL_TABLE_NAME = QUERY_NAME
 
@@ -49,7 +49,7 @@ def get_aws_credentials():
 
 # DAG definition
 dag = DAG(
-    'etl_athena_mysql_query_1',
+    f"etl_athena_mysql_{QUERY_NAME}",
     description='Reusable ETL DAG for Athena to MySQL',
     schedule_interval='@once',
     start_date=datetime(2024, 1, 1),
