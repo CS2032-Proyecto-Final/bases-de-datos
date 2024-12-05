@@ -46,15 +46,28 @@ def export_table_to_csv_dynamodb(prefix, table_name=TABLE_NAME):
             # Contador para filas exportadas
             row_count = 0
 
+             # Determinar todas las claves posibles
+            all_keys = []
+            items = []
+            
             # Iterar sobre las páginas
             for page in response_iterator:
-                items = page.get('Items', [])
-                for item in items:
+                for item in page.get('Items', []):
                     # Convertir el formato de DynamoDB a un formato plano
                     flat_item = {k: list(v.values())[0] for k, v in item.items()}
+                    for key in flat_item.keys():
+                        if key not in all_keys:
+                            all_keys.append(key)  # Agregar claves en el orden encontrado
+                    
                     # Escribir los valores como una fila en el archivo CSV
-                    writer.writerow(flat_item.values())
+                    items.append(flat_item)
                     row_count += 1
+            
+            headers = all_keys
+
+            for flat_item in items:
+                row = [flat_item.get(key, '') for key in headers]
+                writer.writerow(row)
 
         logger.success(f"Exportación completada. Archivo generado: {csv_file_path}. Total de filas exportadas: {row_count}")
     except Exception as e:
