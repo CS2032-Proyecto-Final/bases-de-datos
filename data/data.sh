@@ -7,6 +7,7 @@ scripts=(
   "environments.py"
   "favorites.py"
   "notifications.py"
+  "reservations.py"
 )
 
 # Ejecutar cada script
