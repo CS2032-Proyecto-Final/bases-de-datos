@@ -5,11 +5,11 @@ from loguru import logger
 from datetime import datetime
 
 # Configuración de logger con milisegundos
-LOG_FILE_PATH = "/logs/pull_notifications.log"
+LOG_FILE_PATH = "/logs/pull_reservations.log"
 logger.add(LOG_FILE_PATH, format="{time:YYYY-MM-DD HH:mm:ss.SSS} | {level} | {message}", level="INFO", rotation="10 MB")
 
 # Variable global para definir el nombre de la tabla
-TABLE_NAME = "t_notifications"
+TABLE_NAME = "t_reservations"
 
 def export_table_to_csv_dynamodb(prefix, table_name=TABLE_NAME):
     """

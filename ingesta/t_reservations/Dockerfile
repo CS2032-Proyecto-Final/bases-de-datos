@@ -13,4 +13,4 @@ WORKDIR /usr/src/app
 COPY . .
 
 # Use the listener script as the entry point
-CMD ["bash", "-c", "python3 ./pull_users.py && python3 ./load_users.py"]
+CMD ["bash", "-c", "python3 ./pull_reservations.py && python3 ./load_reservations.py"]

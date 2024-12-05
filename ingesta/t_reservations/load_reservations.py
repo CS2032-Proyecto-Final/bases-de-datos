@@ -5,12 +5,12 @@ from loguru import logger
 from datetime import datetime
 
 # Configuración de logger con milisegundos
-LOG_FILE_PATH = "/logs/load_notifications.log"
+LOG_FILE_PATH = "/logs/load_reservations.log"
 logger.add(LOG_FILE_PATH, format="{time:YYYY-MM-DD HH:mm:ss.SSS} | {level} | {message}", level="INFO", rotation="10 MB")
 
 # Variables globales
 BASE_DIRECTORY = "."  # Directorio base donde se encuentran los archivos locales
-BOOKS_SUBFOLDER = "notifications"  # Carpeta en el bucket para almacenar los .csv de notificaciones
+BOOKS_SUBFOLDER = "reservations"  # Carpeta en el bucket para almacenar los .csv de libros
 
 # Conexión a S3 usando las credenciales configuradas en ~/.aws/credentials
 s3 = boto3.client('s3')
@@ -27,10 +27,10 @@ def upload_to_s3(file_path, bucket, s3_file_path):
     except Exception as e:
         logger.error(f"Error desconocido al subir el archivo '{file_path}': {str(e)}")
 
-# Función para realizar la ingesta de archivos de notificaciones
+# Función para realizar la ingesta de archivos de libros
 def ingest():
     stage = os.environ.get("STAGE")  # Prefijo basado en el entorno
-    logger.info(f"Iniciando ingesta para el stage '{stage}' en el contenedor 't_notifications'")
+    logger.info(f"Iniciando ingesta para el stage '{stage}' en el contenedor 't_reservations'")
     start_time = datetime.now()
     processed_files = 0
 
@@ -45,7 +45,6 @@ def ingest():
                     
                     # Subir archivo al bucket S3
                     try:
-                        logger.info(f"Procesando archivo: {file_path}")
                         upload_to_s3(file_path, bucket_name, s3_file_path)
                         processed_files += 1
                     except Exception as e:
