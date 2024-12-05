@@ -9,20 +9,36 @@ from io import StringIO
 
 # Variables globales
 ATHENA_QUERY = """
+WITH ColorCounts AS (
+    SELECT 
+        n.tenant_id,
+        n.color,
+        COUNT(*) AS color_count
+    FROM 
+        tnotifications n
+    GROUP BY 
+        n.tenant_id, n.color
+)
 SELECT 
-    SPLIT_PART(r."tenant_id#type", '#', 1) AS tenant_id,
-    COUNT(*) AS active_reservations
+    c.tenant_id,
+    c.color,
+    c.color_count
 FROM 
-    treservations r
-WHERE 
-    r.status = 'pending'
-GROUP BY 
-    SPLIT_PART(r."tenant_id#type", '#', 1)
-ORDER BY 
-    active_reservations DESC;
+    ColorCounts c
+JOIN (
+    SELECT 
+        tenant_id,
+        MAX(color_count) AS max_count
+    FROM 
+        ColorCounts
+    GROUP BY 
+        tenant_id
+) mc
+ON 
+    c.tenant_id = mc.tenant_id AND c.color_count = mc.max_count;
 """  # Replace with your query
 ATHENA_DATABASE = "test-bibliokuna"  # Replace with your Athena database name
-QUERY_NAME="query_4"
+QUERY_NAME="query_3"
 S3_OUTPUT_LOCATION = f"s3://athena-bibliokuna/{QUERY_NAME}/"  # Replace with your S3 output path
 MYSQL_TABLE_NAME = QUERY_NAME
 
@@ -130,6 +146,9 @@ def load_data_to_mysql():
 
     # Leer archivo transformado
     df = pd.read_csv(f"/tmp/transformed_data_{QUERY_NAME}.csv")
+
+    drop_table_query = f"DROP TABLE IF EXISTS {MYSQL_TABLE_NAME};"
+    cursor.execute(drop_table_query)
 
     # Crear tabla si no existe
     create_table_query = f"""

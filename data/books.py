@@ -55,8 +55,11 @@ def create_book(entry):
         "tenant_id": random.choice(tenants),
         "isbn": entry["isbn"],
         "title": entry["title"],
+        "title_index": entry["title"].lower(),  # Índice en minúsculas
         "author_name": author_name,
+        "author_name_index": author_name.lower(),  # Índice en minúsculas
         "author_lastname": author_lastname,
+        "author_lastname_index": author_lastname.lower(),  # Índice en minúsculas
         "pages": clean_pages(entry["pages"]),
         "quantity": random.randint(3, 20),
         "stock": random.randint(1, 15),
