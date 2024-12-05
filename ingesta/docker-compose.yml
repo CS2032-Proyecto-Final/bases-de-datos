@@ -5,7 +5,7 @@ services:
     environment:
       - STAGE=${STAGE}
     volumes:
-      - ~/.aws:/root/.aws:ro
+      - ~/.aws-credentials/eduardo:/root/.aws:ro
       - ./logs:/logs
 
   ingesta-t_favorites:
@@ -14,7 +14,7 @@ services:
     environment:
       - STAGE=${STAGE}
     volumes:
-      - ~/.aws:/root/.aws:ro
+      - ~/.aws-credentials/mikel:/root/.aws:ro
       - ./logs:/logs
 
   ingesta-t_environments:
@@ -23,7 +23,7 @@ services:
     environment:
       - STAGE=${STAGE}
     volumes:
-      - ~/.aws:/root/.aws:ro
+      - ~/.aws-credentials/gino:/root/.aws:ro
       - ./logs:/logs
 
   ingesta-t_books:
@@ -32,7 +32,7 @@ services:
     environment:
       - STAGE=${STAGE}
     volumes:
-      - ~/.aws:/root/.aws:ro
+      - ~/.aws-credentials/gino:/root/.aws:ro
       - ./logs:/logs
 
   ingesta-t_notifications:
@@ -41,7 +41,7 @@ services:
     environment:
       - STAGE=${STAGE}
     volumes:
-      - ~/.aws:/root/.aws:ro
+      - ~/.aws-credentials/quenta:/root/.aws:ro
       - ./logs:/logs
 
   ingesta-t_reservations:
@@ -50,5 +50,5 @@ services:
     environment:
       - STAGE=${STAGE}
     volumes:
-      - ~/.aws:/root/.aws:ro
+      - ~/.aws-credentials/mikel:/root/.aws:ro
       - ./logs:/logs
