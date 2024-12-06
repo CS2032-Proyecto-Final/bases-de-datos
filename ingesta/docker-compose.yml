@@ -7,6 +7,7 @@ services:
     volumes:
       - ~/.aws-credentials/eduardo:/root/.aws:ro
       - ./logs:/logs
+      - ~/.aws-credentials/eduardo:/root/.aws-eduardo:ro
 
   ingesta-t_favorites:
     container_name: t_favorites
@@ -16,6 +17,7 @@ services:
     volumes:
       - ~/.aws-credentials/mikel:/root/.aws:ro
       - ./logs:/logs
+      - ~/.aws-credentials/eduardo:/root/.aws-eduardo:ro
 
   ingesta-t_environments:
     container_name: t_environments
@@ -25,6 +27,7 @@ services:
     volumes:
       - ~/.aws-credentials/gino:/root/.aws:ro
       - ./logs:/logs
+      - ~/.aws-credentials/eduardo:/root/.aws-eduardo:ro
 
   ingesta-t_books:
     container_name: t_books
@@ -34,6 +37,7 @@ services:
     volumes:
       - ~/.aws-credentials/gino:/root/.aws:ro
       - ./logs:/logs
+      - ~/.aws-credentials/eduardo:/root/.aws-eduardo:ro
 
   ingesta-t_notifications:
     container_name: t_notifications
@@ -43,6 +47,7 @@ services:
     volumes:
       - ~/.aws-credentials/quenta:/root/.aws:ro
       - ./logs:/logs
+      - ~/.aws-credentials/eduardo:/root/.aws-eduardo:ro
 
   ingesta-t_reservations:
     container_name: t_reservations
@@ -52,3 +57,4 @@ services:
     volumes:
       - ~/.aws-credentials/mikel:/root/.aws:ro
       - ./logs:/logs
+      - ~/.aws-credentials/eduardo:/root/.aws-eduardo:ro

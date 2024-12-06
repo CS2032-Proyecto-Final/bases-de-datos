@@ -12,6 +12,9 @@ logger.add(LOG_FILE_PATH, format="{time:YYYY-MM-DD HH:mm:ss.SSS} | {level} | {me
 BASE_DIRECTORY = "."  # Directorio base donde se encuentran los archivos locales
 BOOKS_SUBFOLDER = "notifications"  # Carpeta en el bucket para almacenar los .csv de notificaciones
 
+eduardo_credentials_file = "/root/.aws-eduardo"  # Ruta al archivo específico
+os.environ["AWS_SHARED_CREDENTIALS_FILE"] = eduardo_credentials_file  # Establecer como predeterminado para este proceso
+
 # Conexión a S3 usando las credenciales configuradas en ~/.aws/credentials
 s3 = boto3.client('s3')
 

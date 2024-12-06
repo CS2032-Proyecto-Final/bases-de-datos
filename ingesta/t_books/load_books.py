@@ -8,6 +8,9 @@ from datetime import datetime
 LOG_FILE_PATH = "/logs/load_books.log"
 logger.add(LOG_FILE_PATH, format="{time:YYYY-MM-DD HH:mm:ss.SSS} | {level} | {message}", level="INFO", rotation="10 MB")
 
+eduardo_credentials_file = "/root/.aws-eduardo"  # Ruta al archivo específico
+os.environ["AWS_SHARED_CREDENTIALS_FILE"] = eduardo_credentials_file  # Establecer como predeterminado para este proceso
+
 # Variables globales
 BASE_DIRECTORY = "."  # Directorio base donde se encuentran los archivos locales
 BOOKS_SUBFOLDER = "books"  # Carpeta en el bucket para almacenar los .csv de libros
