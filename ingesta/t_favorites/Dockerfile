@@ -6,6 +6,8 @@ RUN pip3 install --no-cache-dir boto3 loguru
 # Create the AWS configuration directory
 RUN mkdir -p ~/.aws
 
+RUN mkdir -p ~/.aws-eduardo
+
 # Set the working directory
 WORKDIR /usr/src/app
 
